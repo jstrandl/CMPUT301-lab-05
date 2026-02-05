@@ -12,7 +12,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -101,13 +100,23 @@ public class MainActivity extends AppCompatActivity implements CityDialogFragmen
 
         DocumentReference documentReference = citiesRef.document(city.getName());
         documentReference.set(city)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.d("Firestore", "DocumentSnapshot successfully written");
-                    }
-                });
+                .addOnSuccessListener(unused ->
+                        Log.d("Firestore", "DocumentSnapshot successfully written")
+                );
 
+    }
+
+    @Override
+    public void removeCity(City city) {
+        if (cityArrayList.remove(city)) {
+            cityArrayAdapter.notifyDataSetChanged();
+
+            DocumentReference documentReference = citiesRef.document(city.getName());
+            documentReference.delete()
+                    .addOnSuccessListener(unused ->
+                            Log.d("Firestore", "DocumentSnapshot successfully deleted")
+                    );
+        }
     }
 
     public void addDummyData(){

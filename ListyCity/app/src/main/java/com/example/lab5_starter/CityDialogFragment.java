@@ -17,6 +17,7 @@ public class CityDialogFragment extends DialogFragment {
     interface CityDialogListener {
         void updateCity(City city, String title, String year);
         void addCity(City city);
+        void removeCity(City city);
     }
     private CityDialogListener listener;
 
@@ -73,6 +74,10 @@ public class CityDialogFragment extends DialogFragment {
                     } else {
                         listener.addCity(new City(title, year));
                     }
+                })
+                .setNeutralButton("Delete City", (dialog, which) -> {
+                    if (Objects.equals(tag, "City Details"))
+                        listener.removeCity(city);
                 })
                 .create();
     }
