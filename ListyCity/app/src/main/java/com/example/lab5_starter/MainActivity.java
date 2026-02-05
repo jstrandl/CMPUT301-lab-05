@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements CityDialogFragment.CityDialogListener {
 
+    private FirebaseFirestore db;
     private Button addCityButton;
     private ListView cityListView;
 
@@ -54,7 +55,25 @@ public class MainActivity extends AppCompatActivity implements CityDialogFragmen
             CityDialogFragment cityDialogFragment = CityDialogFragment.newInstance(city);
             cityDialogFragment.show(getSupportFragmentManager(),"City Details");
         });
+    db = FirebaseFirestore.getInstance();
+    citiesRef = db.collection("cities");
 
+    citiesRef.addSnapdhotListener((value, error) -> {
+        if (error != null) {
+            Log.e("Firestore", error.toString());
+        }
+
+        if (value != null && !value.isEmpty()) {
+            cityArrayList.clear();
+            for (QueryDocumentSnapshot snapshot: value) {
+                String = snapshot.getString("name");
+                String province = snapshot.getString("province");
+
+                cityArrayList.add(new City(name, province));
+            }
+            cityArrayAdapter.notifyDataSetChanged();
+        }
+    }
     }
 
     @Override
@@ -70,6 +89,15 @@ public class MainActivity extends AppCompatActivity implements CityDialogFragmen
     public void addCity(City city){
         cityArrayList.add(city);
         cityArrayAdapter.notifyDataSetChanged();
+
+        DocumentReference documentReference = citiedRef.document(city.getName());
+        documentReference.set(city)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Firestore", "DocumentSnapshot successfully written");
+                    }
+                });
 
     }
 
