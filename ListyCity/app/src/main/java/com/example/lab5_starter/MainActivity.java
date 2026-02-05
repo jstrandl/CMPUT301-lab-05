@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements CityDialogFragmen
             CityDialogFragment cityDialogFragment = CityDialogFragment.newInstance(city);
             cityDialogFragment.show(getSupportFragmentManager(),"City Details");
         });
+
         db = FirebaseFirestore.getInstance();
         citiesRef = db.collection("cities");
 
